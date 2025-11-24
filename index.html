@@ -1912,13 +1912,50 @@
     for (let i = 1; i <= totalImages; i++) {
       const slide = document.createElement('div');
       slide.className = 'hero-bg-slide' + (i === 1 ? ' active' : '');
-      slide.innerHTML = `<img src="${i}.png" alt="Background ${i}" loading="${i === 1 ? 'eager' : 'lazy'}">`;
+      const img = document.createElement('img');
+      img.alt = `Background ${i}`;
+
+      // Only load first image immediately
+      if (i === 1) {
+        img.src = `${i}.png`;
+        img.loading = 'eager';
+      } else {
+        // Store image path in data attribute, don't load yet
+        img.dataset.src = `${i}.png`;
+        img.style.opacity = '0';
+      }
+
+      slide.appendChild(img);
       heroBg.appendChild(slide);
 
       const dot = document.createElement('div');
       dot.className = 'counter-dot' + (i === 1 ? ' active' : '');
       dot.setAttribute('data-index', i - 1);
       imageCounter.appendChild(dot);
+    }
+
+    // Preload images 2 and 3 after first image loads
+    const firstImg = document.querySelector('.hero-bg-slide:first-child img');
+    if (firstImg.complete) {
+      preloadNextImages();
+    } else {
+      firstImg.addEventListener('load', preloadNextImages);
+    }
+
+    function preloadNextImages() {
+      // Preload next 2 images
+      for (let i = 2; i <= 3 && i <= totalImages; i++) {
+        const img = document.querySelector(`.hero-bg-slide:nth-child(${i}) img`);
+        if (img && img.dataset.src) {
+          const tempImg = new Image();
+          tempImg.src = img.dataset.src;
+          tempImg.onload = () => {
+            img.src = img.dataset.src;
+            img.style.opacity = '1';
+            delete img.dataset.src;
+          };
+        }
+      }
     }
 
     const bgSlides = document.querySelectorAll('.hero-bg-slide');

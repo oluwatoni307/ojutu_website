@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ojutu - Making Life Gleeful & Easier</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Shrikhand&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00A14B;
+            --primary-hover: #008C40;
+            --dark-bg: #0A0A0A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B8B8B8;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== Premium Floating Navbar ===== */
+        .nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: calc(100% - 48px);
+            max-width: 1200px;
+            height: 64px;
+            padding: 0 24px 0 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.4);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav.scrolled {
+            background: rgba(10, 10, 10, 0.7);
+            height: 60px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .nav-logo {
+            font-family: 'Shrikhand', cursive;
+            font-size: 32px;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--primary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 8px rgba(0, 161, 75, 0.3));
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 12px rgba(0, 161, 75, 0.5));
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 24px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-menu a:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            width: 28px;
+            height: 24px;
+            padding: 4px;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* ===== Hero Section - Editorial Premium ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .hero-bg-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hero-bg-slide.active {
+            opacity: 1;
+        }
+
+        .hero-bg-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        /* Premium gradient overlay */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom,
+                    rgba(10, 10, 10, 0) 0%,
+                    rgba(10, 10, 10, 0) 70%,
+                    rgba(10, 10, 10, 0.2) 80%,
+                    rgba(10, 10, 10, 0.8) 90%,
+                    rgba(10, 10, 10, 0.95) 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Bottom content container with glassmorphism */
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1400px;
+            padding: 48px 6% 48px;
+            margin: 0 auto;
+            animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Text content wrapper */
+        .hero-text {
+            max-width: 1000px;
+            margin: 0 auto 32px;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(32px, 5.5vw, 56px);
+            font-weight: 600;
+            margin-bottom: 0;
+            line-height: 1.2;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.8),
+                0 4px 32px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1.4s ease 0.2s both;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hero-content h1 br {
+            display: block;
+        }
+
+        .hero-content p {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Premium CTA Buttons */
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeIn 1.8s ease 0.6s both;
+        }
+
+        .cta-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 40px;
+            background: var(--primary-color);
+            border-radius: 50px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: -0.01em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 161, 75, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .cta-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .cta-primary:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .cta-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 161, 75, 0.5),
+                0 0 0 1px rgba(0, 161, 75, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .cta-primary i {
+            transition: transform 0.3s ease;
+        }
+
+        .cta-primary:hover i {
+            transform: translateX(4px);
+        }
+
+        .cta-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: -0.01em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    transparent 100%);
+            transition: left 0.6s ease;
+        }
+
+        .cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-secondary:hover::before {
+            left: 100%;
+        }
+
+        .cta-secondary i {
+            transition: transform 0.3s ease;
+        }
+
+        .cta-secondary:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Elegant scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scroll-indicator-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    transparent 100%);
+            animation: lineSlide 2s ease-in-out infinite;
+        }
+
+        @keyframes lineSlide {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translateY(-10px);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(10px);
+            }
+        }
+
+        .scroll-indicator i {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .scroll-indicator:hover i {
+            color: var(--primary-color);
+            transform: translateY(4px);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        /* Image counter indicator */
+        .image-counter {
+            position: absolute;
+            top: 50%;
+            right: 40px;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            animation: fadeIn 2s ease 1s both;
+        }
+
+        .counter-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .counter-dot.active {
+            background: var(--primary-color);
+            height: 32px;
+            border-radius: 4px;
+            box-shadow: 0 0 12px rgba(0, 161, 75, 0.6);
+        }
+
+        .counter-dot:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(1.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .nav {
+                left: 16px;
+                right: 16px;
+                transform: none;
+                width: auto;
+                padding: 0 20px;
+                height: 60px;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 92px;
+                left: 16px;
+                right: 16px;
+                flex-direction: column;
+                background: rgba(10, 10, 10, 0.95);
+                backdrop-filter: blur(20px);
+                border-radius: 24px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                overflow: hidden;
+                max-height: 0;
+                opacity: 0;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                gap: 0;
+            }
+
+            .nav-menu.active {
+                max-height: 400px;
+                opacity: 1;
+                padding: 8px;
+            }
+
+            .nav-menu a {
+                width: 100%;
+                padding: 16px 20px;
+                border-radius: 16px;
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .nav-toggle.active span:nth-child(1) {
+                transform: rotate(45deg) translateY(8px);
+            }
+
+            .nav-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .nav-toggle.active span:nth-child(3) {
+                transform: rotate(-45deg) translateY(-8px);
+            }
+
+            .image-counter {
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero-content {
+                padding: 32px 5% 48px;
+            }
+
+            .hero-content h1 {
+                margin-bottom: 16px;
+            }
+
+            .hero-content h1 br {
+                display: none;
+            }
+
+            .hero-content p {
+                margin-bottom: 32px;
+            }
+
+            .hero-ctas {
+                flex-direction: column;
+                width: 100%;
+                gap: 12px;
+            }
+
+            .cta-primary,
+            .cta-secondary {
+                width: 100%;
+                justify-content: center;
+                padding: 16px 32px;
+            }
+
+            .scroll-indicator {
+                bottom: 20px;
+            }
+
+            .image-counter {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Premium Navbar -->
+    <nav class="nav">
+        <a href="#" class="nav-logo">ojutu</a>
+        <ul class="nav-menu">
+            <li><a href="#capabilities">Capabilities</a></li>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="nav-toggle" id="nav-toggle">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg" id="heroBg"></div>
+
+        <!-- Image counter dots -->
+        <div class="image-counter" id="imageCounter"></div>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>We make life gleeful and easier<br>for everyday people.</h1>
+            </div>
+
+            <div class="hero-ctas">
+                <a href="#contact" class="cta-primary">
+                    Start Your Project
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#work" class="cta-secondary">
+                    <i class="fas fa-sparkles"></i>
+                    See Our Work
+                </a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <div class="scroll-indicator-line"></div>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <script>
+        // Generate hero background slides from local images
+        const heroBg = document.getElementById('heroBg');
+        const imageCounter = document.getElementById('imageCounter');
+        const totalImages = 10;
+
+        // Create slides and counter dots
+        for (let i = 1; i <= totalImages; i++) {
+            // Create slide
+            const slide = document.createElement('div');
+            slide.className = 'hero-bg-slide' + (i === 1 ? ' active' : '');
+            slide.innerHTML = `<img src="${i}.png" alt="Background ${i}">`;
+            heroBg.appendChild(slide);
+
+            // Create counter dot
+            const dot = document.createElement('div');
+            dot.className = 'counter-dot' + (i === 1 ? ' active' : '');
+            dot.setAttribute('data-index', i - 1);
+            imageCounter.appendChild(dot);
+        }
+
+        // Background carousel with counter
+        const bgSlides = document.querySelectorAll('.hero-bg-slide');
+        const counterDots = document.querySelectorAll('.counter-dot');
+        let currentBgSlide = 0;
+        let autoPlayInterval;
+
+        function showBgSlide(index) {
+            bgSlides.forEach(slide => slide.classList.remove('active'));
+            counterDots.forEach(dot => dot.classList.remove('active'));
+            bgSlides[index].classList.add('active');
+            counterDots[index].classList.add('active');
+            currentBgSlide = index;
+        }
+
+        function nextBgSlide() {
+            currentBgSlide = (currentBgSlide + 1) % bgSlides.length;
+            showBgSlide(currentBgSlide);
+        }
+
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(nextBgSlide, 5000);
+        }
+
+        function stopAutoPlay() {
+            clearInterval(autoPlayInterval);
+        }
+
+        // Counter dot click handlers
+        counterDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.getAttribute('data-index'));
+                showBgSlide(index);
+                stopAutoPlay();
+                setTimeout(startAutoPlay, 8000); // Resume after 8 seconds
+            });
+        });
+
+        // Start autoplay
+        startAutoPlay();
+
+        // Navbar interactions
+        const nav = document.querySelector('.nav');
+        const toggle = document.getElementById('nav-toggle');
+        const menu = document.querySelector('.nav-menu');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        toggle.addEventListener('click', () => {
+            toggle.classList.toggle('active');
+            menu.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                toggle.classList.remove('active');
+                menu.classList.remove('active');
+            });
+        });
+
+        // Smooth scroll for scroll indicator
+        document.querySelector('.scroll-indicator').addEventListener('click', () => {
+            window.scrollBy({
+                top: window.innerHeight,
+                behavior: 'smooth'
+            });
+        });
+
+        // Parallax effect on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+
+            document.querySelector('.hero-content').style.transform =
+                `translate(${moveX}px, ${moveY}px)`;
+        });
+    </script>
+</body>
+
+</html>
